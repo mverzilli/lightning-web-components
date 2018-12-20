@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vimeo Embed</title>
+
+    <style type="text/css">
+        .wrapper {
+            max-width: 680px;
+            margin: 60px auto 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+      <vimeo-embed embed="73531722"></vimeo-embed>
+    </div>
+</body>
+<script>
+    (function(window, document, undefined) {
+
+        class VimeoEmbed extends HTMLElement {
+            constructor() {
+                super();
+            }
+
+            connectedCallback() {
+                var shadowRoot = this.attachShadow({mode:'open'});
+
+                // Adds a template clone into shadow root.
+                // var clone = thatDoc.importNode( template, true );
+                var clone = document.createElement('div');
+                clone.setAttribute('class', 'vimeo');
+
+                var style = document.createElement('style');
+                style.textContent = `
+                    .vimeo {
+                        background-color: #000;
+                        margin-bottom: 30px;
+                        position: relative;
+                        padding-top: 56.25%;
+                        overflow: hidden;
+                        cursor: pointer;
+                    }
+
+                    .vimeo img {
+                        width: 100%;
+                        top: -16.82%;
+                        left: 0;
+                        opacity: 0.7;
+                    }
+
+                    .vimeo img,
+                    .vimeo .play-button {
+                        cursor: pointer;
+                    }
+                    .vimeo img,
+                    .vimeo iframe,
+                    .vimeo .play-button,
+                    .vimeo .play-button:before {
+                        position: absolute;
+                    }
+
+                    .vimeo iframe {
+                        height: 100%;
+                        width: 100%;
+                        top: 0;
+                        left: 0;
+                    }
+                `
+                shadowRoot.appendChild(style);
+                shadowRoot.appendChild(clone);
+
+                var embed = this.getAttribute("embed");
+
+                var video = shadowRoot.querySelector( ".vimeo" );
+                this.createAndPlay(embed, video);
+            }
+
+            createAndPlay(embedID, videoElem) {
+                videoElem.addEventListener( "click", function() {
+                    var iframe = document.createElement( "iframe" );
+
+                    iframe.setAttribute( "frameborder", "0" );
+                    iframe.setAttribute( "allowfullscreen", "" );
+                    iframe.setAttribute( "webkitallowfullscreen", "" );
+                    iframe.setAttribute( "mozallowfullscreen", "" );
+                    iframe.setAttribute( "src", "https://player.vimeo.com/video/" + embedID + "?autoplay=1" );
+                    iframe.setAttribute( "width", "640");
+                    iframe.setAttribute( "height", "360");
+
+                    this.innerHTML = "";
+                    this.appendChild( iframe );
+                });
+            }
+        }
+        window.customElements.define('vimeo-embed', VimeoEmbed);
+    })(window, document);
+</script>
+</html>
+
